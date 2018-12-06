@@ -18,21 +18,32 @@ app.use(function (req, res, next) {
    next();
 });
 
-// root route
-// get
+const db = require('./models');
+
+// root route, GET
+// get all places from db, send to client as json
 app.get('/', (req, res) => {
-   res.send('this is root route')
+   // res.send('this is root route')
+   db.place.find({}, (err, allplaces) => {
+       if(err) { return console.log(err) }
+       res.json(allplaces)
+   });
 });
 
-// place route
-// post
-// listen to form sumbit request, read in form data, send back sucess DB entry
+// place route, POST
+// listen to form sumbit request, read in form data, 
+// add new place to db, send back sucess db entry
 app.post('/place', (req, res) => {
    // res.send('this is places route!')
    if(req.body){
-       const {placetype, about} = req.body;
-       console.log('placetype: '+placetype, 'about: '+about);
-       res.json({placetype: placetype, about: about});
+       const {placetype, about, lat, lng} = req.body;
+       console.log('placetype: '+placetype, 'about: '+about, 'lat: '+lat, 'lng: '+lng);
+       let newplace = {placetype: placetype, about: about, lat: lat, lng: lng};
+       db.place.create(newplace, (err, addedplace) => {
+           if (err) { return res.status(400).json({ err: "error can not add new place" }) }
+           res.json(addedplace);
+         });
+       // res.json({placetype: placetype, about: about, lat: lat, lng: lng});
    }else{
        res.json({error: 'request error'});
    }
