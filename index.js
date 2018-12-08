@@ -12,8 +12,10 @@ app.use(bodyParser.json());
 
 // to take care of cors error use either / both install cors or set request header
 // set request header
+// to allow delete request, add delete here
 app.use(function (req, res, next) {
    res.header("Access-Control-Allow-Origin", "*");
+   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
    next();
 });
@@ -48,6 +50,22 @@ app.post('/place', (req, res) => {
        res.json({error: 'request error'});
    }
 });
+
+// place by id route, DELETE
+// I did not send id as body, I send it as params that appended to url
+app.delete('/place/:id', (req, res) => {
+    // get place id from url params (`req.params`)
+    console.log('place delete', req.params.id);
+    var placeId = req.params.id;
+    // find the index of the place we want to remove
+    db.place.deleteOne(
+    { _id: placeId },
+    (err, deletedPlace) => {
+      if (err) { return res.status(400).json({ err: "error has occured" }) }
+      console.log('deletedPlace', deletedPlace);
+      res.json(deletedPlace);
+    });
+ });
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
