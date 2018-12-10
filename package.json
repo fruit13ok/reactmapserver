@@ -1,6 +1,10 @@
 {
   "name": "reactmapserver",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.7.0",
+    "npm": "6.2.0"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
